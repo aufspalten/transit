@@ -44,7 +44,8 @@ abstract class AbstractImageTransformer extends AbstractTransformer {
         }
 
         $sourcePath = $file->path();
-        $mimeType = $file->type();
+        $imageType = exif_imagetype($sourcePath);
+        $mimeType = image_type_to_mime_type($imageType);
 
         // Create an image to work with
         switch ($mimeType) {
