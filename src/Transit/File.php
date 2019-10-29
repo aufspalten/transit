@@ -194,9 +194,9 @@ class File {
                         if (!empty($data[$find])) {
                             // Convert DMS (degrees, minutes, seconds) to decimals
                             if ($key === 'latitude' || $key === 'longitude'){
-                                $deg = $data[$find][0];
-                                $min = $data[$find][1];
-                                $sec = $data[$find][2];
+                                $deg = $this->normalizeCoords($data[$find][0]);
+                                $min = $this->normalizeCoords($data[$find][1]);
+                                $sec = $this->normalizeCoords($data[$find][2]);
                                 $value = $deg + ((($min * 60) + $sec) / 3600);
 
                             } else {
@@ -218,6 +218,15 @@ class File {
 
             return $exif;
         });
+    }
+
+    private function normalizeCoords($coord): int {
+      $ints = explode("/", $coord);
+      if (count($ints) === 2) {
+        $coord = $ints[0] / $ints[1];
+      }
+
+      return (int) $coord;
     }
 
     /**
