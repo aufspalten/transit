@@ -60,6 +60,9 @@ abstract class AbstractImageTransformer extends AbstractTransformer {
             case 'image/pjpeg':
                 $sourceImage = @imagecreatefromjpeg($sourcePath);
             break;
+            case 'image/webp':
+                $sourceImage = @imagecreatefromwebp($sourcePath);
+            break;
             default:
                 $sourceImage = false;
             break;
@@ -144,6 +147,9 @@ abstract class AbstractImageTransformer extends AbstractTransformer {
             case 'image/jpeg':
             case 'image/pjpeg':
                 imagejpeg($targetImage, $targetPath, $options['quality']);
+            break;
+            case 'image/webp':
+                imagewebp($targetImage, $targetPath, $options['quality']);
             break;
         }
 
