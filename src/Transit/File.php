@@ -10,6 +10,7 @@ namespace Transit;
 use Transit\Exception\IoException;
 use \InvalidArgumentException;
 use \Closure;
+use ErrorException;
 
 /**
  * Handles the management of a single file on the file system.
@@ -218,6 +219,17 @@ class File {
 
             return $exif;
         });
+    }
+
+    private function getExifFromFile(File $file): ?array
+    {
+      $path = $file->path();
+
+      try {
+        return ErrorHandler::call(fn() => exif_read_data($path));
+      } catch (ErrorException $e) {
+        return null;
+      }
     }
 
     private function normalizeCoords($coord): int {
