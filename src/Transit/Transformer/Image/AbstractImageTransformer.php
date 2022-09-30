@@ -44,7 +44,8 @@ abstract class AbstractImageTransformer extends AbstractTransformer {
         }
 
         $sourcePath = $file->path();
-        $mimeType = $file->type();
+        $imageType = exif_imagetype($sourcePath);
+        $mimeType = image_type_to_mime_type($imageType);
 
         // Create an image to work with
         switch ($mimeType) {
@@ -58,6 +59,9 @@ abstract class AbstractImageTransformer extends AbstractTransformer {
             case 'image/jpeg':
             case 'image/pjpeg':
                 $sourceImage = @imagecreatefromjpeg($sourcePath);
+            break;
+            case 'image/webp':
+                $sourceImage = @imagecreatefromwebp($sourcePath);
             break;
             default:
                 $sourceImage = false;
@@ -143,6 +147,9 @@ abstract class AbstractImageTransformer extends AbstractTransformer {
             case 'image/jpeg':
             case 'image/pjpeg':
                 imagejpeg($targetImage, $targetPath, $options['quality']);
+            break;
+            case 'image/webp':
+                imagewebp($targetImage, $targetPath, $options['quality']);
             break;
         }
 

@@ -10,6 +10,7 @@ namespace Transit;
 use Transit\Exception\IoException;
 use \InvalidArgumentException;
 use \Closure;
+use ErrorException;
 
 /**
  * Handles the management of a single file on the file system.
@@ -187,16 +188,16 @@ class File {
             );
 
             if ($file->supportsExif()) {
-                if ($data = @exif_read_data($file->path())) {
+                if ($data = $this->getExifFromFile($file)) {
                     foreach ($fields as $key => $find) {
                         $value = '';
 
                         if (!empty($data[$find])) {
                             // Convert DMS (degrees, minutes, seconds) to decimals
                             if ($key === 'latitude' || $key === 'longitude'){
-                                $deg = $data[$find][0];
-                                $min = $data[$find][1];
-                                $sec = $data[$find][2];
+                                $deg = $this->normalizeCoords($data[$find][0]);
+                                $min = $this->normalizeCoords($data[$find][1]);
+                                $sec = $this->normalizeCoords($data[$find][2]);
                                 $value = $deg + ((($min * 60) + $sec) / 3600);
 
                             } else {
@@ -218,6 +219,26 @@ class File {
 
             return $exif;
         });
+    }
+
+    private function getExifFromFile(File $file): ?array
+    {
+      $path = $file->path();
+
+      try {
+        return ErrorHandler::call(fn() => exif_read_data($path));
+      } catch (ErrorException $e) {
+        return null;
+      }
+    }
+
+    private function normalizeCoords($coord): int {
+      $ints = explode("/", $coord);
+      if (count($ints) === 2) {
+        $coord = $ints[0] / $ints[1];
+      }
+
+      return (int) $coord;
     }
 
     /**
