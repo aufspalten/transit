@@ -235,6 +235,9 @@ class File {
     private function normalizeCoords($coord): int {
       $ints = explode("/", $coord);
       if (count($ints) === 2) {
+        if ($ints[1] == 0) {
+          return 0;
+        }
         $coord = $ints[0] / $ints[1];
       }
 
