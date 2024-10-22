@@ -104,7 +104,7 @@ abstract class AbstractImageTransformer extends AbstractTransformer {
         $targetImage = imagecreatetruecolor($width, $height);
 
         // If gif/png allow transparencies
-        if ($mimeType === 'image/gif' || $mimeType === 'image/png') {
+        if ($mimeType === 'image/gif' || $mimeType === 'image/png' || $mimeType === 'image/webp') {
             imagealphablending($targetImage, false);
             imagesavealpha($targetImage, true);
             imagefill($targetImage, 0, 0, imagecolorallocatealpha($targetImage, 255, 255, 255, 127));
